@@ -1,0 +1,21 @@
+C006   000           jmp    reset
+0001   001     i     dw
+0014   002     pl    dw
+3000   003     inst
+0001   004     one
+0000   005     zero
+3005   006     reset load   0              reset i to 0
+4001   007	     store  i  
+3001   008     loop  load   i
+6002   009           sub    pL             if ((i - pl) == 0) xit
+D014   00A	     jmpe   xit            
+3003   00B           load   inst           load up instruction to load the next value
+5001   00C           add    i
+400E   00D	     store  exec
+300E   00E     exec
+1800   00F           printH
+3001   010           load   i             i++
+5004   011	     add    one
+4001   012	     store  i
+C008   013           jmp    loop
+0000   014     xit   halt

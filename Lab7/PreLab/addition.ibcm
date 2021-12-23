@@ -1,0 +1,36 @@
+C001   location      label      op      addr      comments
+C009   001                      jmp     start     skip past vars to start
+0000   002
+0000   003           a          dw      000       stores 1st input
+0000   004           b          dw      000       stores 2nd input
+0000   005           c          dw      000       stores 3rd input
+0000   006
+0000   007
+0000   008
+3007   009           start/set0 load    007       resets accumulator to 0
+1000   00A           i1         input             reads 1st input to accumulator
+B000   00B                      nop
+4003   00C           s1         store   a(003)    stores accumulator value to a
+B000   00D                      nop
+1000   00E           i2         input             reads 2nd input to accumulator
+B000   00F                      nop
+4004   010           s2         store   b(004)    stores accumulator value to b
+1000   011           i3         input             reads 3rd input to accumulator
+4005   012           s3         store   c(005)    stores accumulator to c
+B000   013                      nop
+B000   014                      nop
+5003   015           add a      add     a(003)    adds a to accumulator
+5004   016           add b      add     b(004)    adds b to accumulator
+B000   017                      nop               c is already part of accumulator sum
+1800   018           ps         output            print sum (from accumulator)
+B000   019           nop
+D01D   01A                      jpme    end(01D)  if sum == 0 jump tp 1D
+C009   01B                      jmp     start     else jump to start
+B000   01C
+3003   01D           end        load    a         load a to accumulator          
+1800   01E                      output            print accum
+3004   01F                      load    b         load b to accum
+1800   020                      output            print accum
+3005   021                      load    c         load c to accum
+1800   022                      output            print accum
+0000   023                      halt

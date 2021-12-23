@@ -1,0 +1,85 @@
+C001   location      label      op      addr      comments
+C00E   001                      jmp     start     skip around vars
+0000   002           s          dw                variable to store size of array
+0050   003           a          dw                variable to store location of array (which is 050)
+0000   004           i          dw                variable to store the number of elements entered
+0000   005           zero       dw
+0001   006           one        dw
+0000   007           e          dw                variable to store current array element
+4050   008           inst       dw                use to form instruction later
+3050   009           inst2      dw
+B000   00A                      nop
+B000   00B                      nop
+B000   00C			nop
+B000   00D			nop
+1000   00E           start      ReadH             reads array size input to accumulator
+4002   00F                      store    s        stores accumulator value to s         
+3004   010           loop       load     i        loads i into accumulator
+6002   011                      sub      s        i - s 
+D029   012           		jmpe    printstart    if accum == 0 (meaning i == s) done with input, start printing
+B000   013	                nop
+1000   014                      ReadH             reads array value to accum
+4007   015       		store    e        stores array value to e     
+B000   016           		nop
+3008   017                      load     inst
+401B   018                      store    exec 
+B000   019			nop
+3007   01A                      load     e
+0000   01B           exec                         executes formed instruction
+B000   01C                      nop
+B000   01D 			nop
+B000   01E                      nop              
+B000   01F			nop
+3008   020                      load     inst     instruction++  
+5006   021                      add      one
+4008   022                      store    inst
+B000   023                      nop
+3004   024                      load     i        i++ 
+5006   025                      add      one
+4004   026			store    i
+C010   027          endloop     jmp      loop
+B000   028			nop       
+3005   029          printstart  load     zero     set accum to 0                              
+4004   02A                      store    i        set i back to 0
+B000   02B          pf loop     nop               start of loop to print forward
+3004   02C                      load     i        loads i to accum     
+6002   02D                      sub      s        accum = i - s         
+D03B   02E                      jmpe     pstart2  if accum == 0 (meaning i == s) done with forward print, start backward            
+B000   02F                      nop
+3009   030                      load     inst2    begin making instruction
+5004   031                      add      i        add i to accum to complete instruction     
+B000   032                      nop
+4035   033                      store    exec2    store the instruction 
+B000   034                      nop
+0000   035          exec2                        load the current index into accumulator
+1800   036                      printH            print accum
+3004   037                      load     i        i++  
+5006   038                      add      one
+4004   039                      store    i
+C02B   03A          endfloop    jmp      nop      pf loop   return to start of loop 
+3004   03B                      load     i        i-- (to make i the max array index) 
+6006   03C                      sub      one
+4004   03D                      store    i                   
+3004   03E          pb loop     load     i         load i to accum (first i will be the max index of the array) (this is the start of loop to print array backward)           
+E04E   03F                      jmpl     xit       if (i < 0)  done printing, jump to a halt
+B000   040                      nop
+3009   041	                load     inst2        start making instruction 2   
+5004   042                      add      i 
+4045   043                      store    exec3
+B000   044                      nop
+0000   045          exec3                             load a[i] to accum
+1800   046                      printH                 print a[i]
+B000   047                      nop
+3004   048                      load    i              i--
+6006   049                      sub     one  
+4004   04A                      store   i
+B000   04B                      nop 
+C03D   04C          endbloop    jmp                     return to start of loop
+B000   04D                      nop
+0000   04E          xit         halt                    program finished
+B000   04F                      nop
+0000   050           a[0]       dw       array start
+0000   051           a[1]       dw       array indices... 
+0000   052           a[2]       dw
+0000   053           a[3]	dw
+0000   054           a[4]	dw

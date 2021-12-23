@@ -1,0 +1,100 @@
+C001   location      label      op      addr         comments
+C00F   001                      jmp     input loop 
+000A   002           max        dw                   const array size (10)
+005A   003           arrstart   dw                   const array addr
+0000   004           i          dw                   iterator
+0000   005           zero       dw
+0001   006           one        dw      arr           
+405A   007           inst       dw
+305A   008           inst2      dw
+0009   009   	     j          dw                   iterator - initial value max - 1
+0000   00A	     a[j]	dw
+0000   00B	     a[j - 1]	dw
+0000   00C	     temp  	dw
+0000   00D
+0000   00E           xit        halt
+3004   00F           input loop load    i           
+6002   010                      sub     max
+D01C   011           		jmpe    reset        if (i - max == 0), done inputting, jump to reset
+3007   012			load    inst         start forming store instruction
+5004   013           		add     i
+4016   014           		store   exec
+1000   015                      readH
+0000   016           exec                            instruction to store element in array
+3004   017            		load    i 	     i++
+5006   018                      add     one
+4004   019          		store   i
+C00F   01A           end il     jmp     input loop   end of input loop     
+B000   01B
+3005   01C           reset 	load    zero
+4004   01D	     		store   i
+3004   01E           outer      load    i            outer for loop for bubble sort
+6002   01F	     		sub     max
+D048   020                      jmpe    print sorted if (i - max == 0) jump to print loop
+3009   021    	     inner      load    i            inner for loop for bubble sort //j's initial value is max - 1
+6004   022                      sub     j            if (j - i) == 0 skip inner loop
+D041   023                      jmpe    here        (but still inside outer loop)
+3008   024      		load    inst2
+5009   025			add     j
+4027   026			store   exec2
+0000   027	     exec2                             //loads a[j]
+400A   028                      store   a[j]      
+3008   029                      load    inst2
+5009   02A                      add     j
+6006   02B                      sub     one
+402D   02C     			store   exec3
+0000   02D           exec3                             //loads a[j - 1]
+400B   02E                	store   a[j - 1]
+600A   02F			sub     a[j]
+E056   030			jmpl    dn             if a[j] >= a[j - 1], don't swap, jump to dn
+D056   031			jmpe    dn
+3007   032			load    inst                      else swap values
+5009   033                      add     j
+4036   034      		store   exec4
+300B   035                      load    a[j - 1]
+0000   036	     exec4
+3007   037		        load    inst
+5009   038			add     j
+6006   039			sub     one     //now accum has intruction to store in j[i - 1]
+403C   03A                      store   exec5
+300A   03B    			load    a[j]
+0000   03C           exec5
+3009   03D                      load   j             j--          
+6006   03E                      sub    one
+4009   03F                      store  j
+C021   040           end inner  jmp    inner
+3004   041           here       load   i             i++
+5006   042 			add    one
+4004   043     			store  i
+3002   044                      load   max           reset j to MAX - 1
+6006   045    			sub    one
+4009   046			store  j
+C01E   047           end outer  jmp    outer
+3005   048           reset2     load    zero         set i back to 0 for this loop
+4004   049                      store   i
+6002   04A           print sorted sub   max          i - max because current value of accum is i     
+D00E   04B                      jmpe    xit         if (i - max == 0), done printing, jump to exit
+3008   04C                      load    inst2        start forming load instruction
+5004   04D                      add     i
+B000   04E                      nop
+4050   04F                      store   exec6
+0000   050           exec6                           instruction to load arr[i]
+1800   051                      printH
+3004   052                      load    i            i++ 
+5006   053                      add     one
+4004   054                      store   i
+C04A   055           end pl     jmp     print sorted   end of print loop
+3009   056           dn         load    j            j-- for do nothing case	
+6006   057                      sub     one             
+4009   058                      store   j
+C021   059                      jmp     inner
+0000   05A           arr          
+0000   05B                
+0000   05C              
+0000   05D          
+0000   05E                 
+0000   05F           	  
+0000   060           
+0000   061
+0000   062
+0000   063
